@@ -94,7 +94,12 @@ class MethodProxy implements InvocationHandler {
         }finally {
             group.shutdownGracefully();
         }
-        Object obj = handler.getResult();
+        Object obj = null;
+        try {
+            obj = handler.getResult();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return obj;
     }
 }

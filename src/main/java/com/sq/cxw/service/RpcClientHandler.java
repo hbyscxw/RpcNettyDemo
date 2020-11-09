@@ -3,6 +3,9 @@ package com.sq.cxw.service;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
+
 /**
  * @author chengxuwei
  * @date 2019-11-07 15:04
@@ -10,18 +13,18 @@ import io.netty.channel.SimpleChannelInboundHandler;
  */
 public class RpcClientHandler extends SimpleChannelInboundHandler {
 
-    private Object result;
+    private CompletableFuture<Object> future = new CompletableFuture<>();
 
-    public Object getResult() {
-        return result;
+    public Object getResult() throws Exception{
+        return future.get();
     }
 
-    public void setResult(Object result) {
-        this.result = result;
+    public Object getResult(long timeout, TimeUnit unit) throws Exception{
+        return future.get(timeout, unit);
     }
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception {
-        setResult(msg);
+        future.complete(msg);
     }
 }
