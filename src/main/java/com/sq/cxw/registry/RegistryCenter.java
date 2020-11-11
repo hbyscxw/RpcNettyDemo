@@ -42,16 +42,16 @@ public class RegistryCenter {
                     .childHandler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         public void initChannel(SocketChannel ch) throws Exception {
-                            // 进行长度字段解码，这里也会对数据进行粘包和拆包处理
+                            // 进行长度字段解码，这里也会对数据进行粘包和拆包处理 inbound
                             ch.pipeline().addLast(new LengthFieldBasedFrameDecoder(1024, 0, 2, 0, 2));
-                            // LengthFieldPrepender是一个编码器，主要是在响应字节数据前面添加字节长度字段
+                            // LengthFieldPrepender是一个编码器，主要是在响应字节数据前面添加字节长度字段 outbound
                             ch.pipeline().addLast(new LengthFieldPrepender(2));
-                            // object解码
+                            // object解码 inbound
                             ch.pipeline().addLast(new ObjectDecoder(ClassResolvers.cacheDisabled(null)));
-                            // object编码
+                            // object编码 outbound
                             ch.pipeline().addLast(new ObjectEncoder());
                             //ChannelPipeline用于存放管理ChannelHandel
-                            //ChannelHandler用于处理请求响应的业务逻辑相关代码
+                            //ChannelHandler用于处理请求响应的业务逻辑相关代码 inbound
                             ch.pipeline().addLast(new RpcServerHandler());
                         }
                     })
